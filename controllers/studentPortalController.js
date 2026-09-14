@@ -55,6 +55,7 @@ exports.fees = async (req, res) => {
 };
 
 // Student: fee submit — transactionId + screenshot
+// studentPortalController.js — submitFee
 exports.submitFee = async (req, res) => {
   try {
     const { feeId, transactionId } = req.body;
@@ -69,12 +70,16 @@ exports.submitFee = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Already verified' });
 
     fee.transactionId = transactionId;
-    fee.screenshotUrl = `/uploads/fees/${req.file.filename}`;
+    fee.screenshotUrl = req.file.path;              // 👈 Cloudinary URL
+    fee.cloudinaryPublicId = req.file.filename;     // 👈 delete এর জন্য
     fee.status = 'submitted';
     fee.submittedAt = new Date();
     await fee.save();
+
     res.json({ success: true, data: fee });
-  } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+  } catch (e) {
+    res.status(500).json({ success: false, message: e.message });
+  }
 };
 
 // Student: notice board

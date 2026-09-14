@@ -70,6 +70,6 @@ router.get('/fees/:id/receipt', feeC.receiptPdf);
 // Settings
 router.get('/settings/payment', settingC.get);
 router.put('/settings/payment', settingC.update);
-router.post('/settings/payment/qr', uploadQr, settingC.uploadQr);
+router.post('/settings/payment/qr', uploadQr.single('qr'), settingC.uploadQr);
 
 module.exports = router;

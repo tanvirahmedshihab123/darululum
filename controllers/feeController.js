@@ -148,7 +148,7 @@ exports.receiptPdf = async (req, res) => {
     // ===== হেডার =====
     doc.rect(0, 0, doc.page.width, 110).fill('#0a0a0a');
     doc.fillColor('#dfae42').fontSize(22).font('Helvetica-Bold')
-      .text('দারুল উলুম ইসলামিয়া মাদ্রাসা', 40, 30);
+      .text('দারুল উলূম ইসলামিয়া মাদ্রাসা', 40, 30);
     doc.fillColor('#94a3b8').fontSize(10).font('Helvetica')
       .text(fee.branch?.name || '', 40, 60)
       .text(fee.branch?.address || '', 40, 74)
@@ -214,7 +214,7 @@ exports.receiptPdf = async (req, res) => {
     doc.fontSize(9).fillColor('#64748b')
       .text('This is a computer-generated receipt. No signature is required.', 40, y);
     doc.fillColor('#94a3b8')
-      .text('দারুল উলুম ইসলামিয়া মাদ্রাসা — জাযাকাল্লাহু খাইরান', 0, y, { align: 'right', width: 555 });
+      .text('দারুল উলূম ইসলামিয়া মাদ্রাসা — জাযাকাল্লাহু খাইরান', 0, y, { align: 'right', width: 555 });
 
     doc.end();
   } catch (e) { res.status(500).json({ success: false, message: e.message }); }

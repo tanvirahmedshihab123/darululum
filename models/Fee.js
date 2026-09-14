@@ -18,7 +18,7 @@ const feeSchema = new mongoose.Schema({
   transactionId: String,
   screenshotUrl: String,
   senderNumber: String,
-
+  cloudinaryPublicId: String,
   submittedAt: Date,
   verifiedAt: Date,
   verifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },

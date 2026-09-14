@@ -3,11 +3,16 @@ const Student = require('../models/Student');
 exports.create = async (req, res) => {
   try {
     const data = { ...req.body };
-    if (req.file) data.photo = `/uploads/students/${req.file.filename}`;
+    if (req.file) {
+      data.photo = req.file.path;                   // 👈 Cloudinary URL
+      data.cloudinaryPublicId = req.file.filename;
+    }
     if (req.admin.role === 'branch') data.branch = req.admin.branch;
     const s = await Student.create(data);
     res.status(201).json({ success: true, data: s });
-  } catch (e) { res.status(400).json({ success: false, message: e.message }); }
+  } catch (e) {
+    res.status(400).json({ success: false, message: e.message });
+  }
 };
 
 exports.list = async (req, res) => {
