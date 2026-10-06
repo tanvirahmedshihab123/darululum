@@ -43,6 +43,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Routes
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/student', require('./routes/studentRoutes'));
+app.use('/api/public', require('./routes/publicRoutes'));
 
 app.get('/', (req, res) =>
   res.json({ status: 'ok', message: 'Madrasa API running' })

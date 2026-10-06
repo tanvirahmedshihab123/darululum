@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { adminAuth, superAdmin } = require('../middleware/auth');
 const { uploadResultPdf, uploadPhoto } = require('../middleware/upload');
+const admissionC = require('../controllers/admissionController');
 
 const adminAuthC = require('../controllers/adminAuthController');
 const branchC   = require('../controllers/branchController');
@@ -71,5 +72,13 @@ router.get('/fees/:id/receipt', feeC.receiptPdf);
 router.get('/settings/payment', settingC.get);
 router.put('/settings/payment', settingC.update);
 router.post('/settings/payment/qr', uploadQr.single('qr'), settingC.uploadQr);
+
+// ═══ Admissions ═══
+router.get('/admissions', admissionC.listApplications);
+router.get('/admissions/stats', admissionC.stats);
+router.get('/admissions/:id', admissionC.getApplication);
+router.patch('/admissions/:id/status', admissionC.updateStatus);
+router.post('/admissions/:id/approve', admissionC.approve);
+router.delete('/admissions/:id', admissionC.removeApplication);
 
 module.exports = router;

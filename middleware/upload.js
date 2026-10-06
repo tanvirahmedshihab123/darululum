@@ -149,3 +149,17 @@ exports.uploadQr = multer({
   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
   limits: { fileSize: 1 * 1024 * 1024 }
 });
+
+
+// Admission documents — photo + certificates
+exports.uploadAdmission = multer({
+  storage: cloudStorage('admissions', 'auto'),
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+// Multiple fields wrapper
+exports.uploadAdmissionFields = exports.uploadAdmission.fields([
+  { name: 'photo', maxCount: 1 },
+  { name: 'birthCertificate', maxCount: 1 },
+  { name: 'previousCertificate', maxCount: 1 },
+]);
