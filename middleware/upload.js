@@ -1,14 +1,68 @@
+// // // const multer = require('multer');
+// // // const { CloudinaryStorage } = require('multer-storage-cloudinary');
+// // // const cloudinary = require('../config/cloudinary');
+
+// // // // ── Helper: Cloudinary storage for a folder ──
+// // // const cloudStorage = (folder, resourceType = 'auto', allowedFormats) =>
+// // //   new CloudinaryStorage({
+// // //     cloudinary,
+// // //     params: {
+// // //       folder: `madrasa/${folder}`,
+// // //       resource_type: resourceType,   // 'image' | 'raw' | 'video' | 'auto'
+// // //       allowed_formats: allowedFormats,
+// // //       transformation: resourceType === 'image'
+// // //         ? [{ width: 1200, crop: 'limit', quality: 'auto' }]
+// // //         : undefined
+// // //     }
+// // //   });
+
+// // // // ── File filters ──
+// // // const fileFilter = (types) => (req, file, cb) => {
+// // //   if (types.includes(file.mimetype)) cb(null, true);
+// // //   else cb(new Error(`Invalid file type: ${file.mimetype}`));
+// // // };
+
+// // // // ── Export multer instances ──
+
+// // // // Results (PDF) — 'raw' হিসেবে Cloudinary-তে যাবে
+// // // exports.uploadResultPdf = multer({
+// // //   storage: cloudStorage('results', 'raw', ['pdf']),
+// // //   fileFilter: fileFilter(['application/pdf']),
+// // //   limits: { fileSize: 10 * 1024 * 1024 }   // 10MB
+// // // });
+
+// // // // Fee screenshots (image)
+// // // exports.uploadScreenshot = multer({
+// // //   storage: cloudStorage('fees', 'image', ['jpg', 'jpeg', 'png', 'webp']),
+// // //   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
+// // //   limits: { fileSize: 5 * 1024 * 1024 }
+// // // });
+
+// // // // Student photos
+// // // exports.uploadPhoto = multer({
+// // //   storage: cloudStorage('students', 'image', ['jpg', 'jpeg', 'png', 'webp']),
+// // //   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
+// // //   limits: { fileSize: 2 * 1024 * 1024 }
+// // // });
+
+// // // // Payment QR (settings)
+// // // exports.uploadQr = multer({
+// // //   storage: cloudStorage('settings', 'image', ['jpg', 'jpeg', 'png', 'webp']),
+// // //   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
+// // //   limits: { fileSize: 1 * 1024 * 1024 }
+// // // });
+
+// // // middleware/upload.js
 // // const multer = require('multer');
 // // const { CloudinaryStorage } = require('multer-storage-cloudinary');
 // // const cloudinary = require('../config/cloudinary');
 
-// // // ── Helper: Cloudinary storage for a folder ──
 // // const cloudStorage = (folder, resourceType = 'auto', allowedFormats) =>
 // //   new CloudinaryStorage({
 // //     cloudinary,
 // //     params: {
 // //       folder: `madrasa/${folder}`,
-// //       resource_type: resourceType,   // 'image' | 'raw' | 'video' | 'auto'
+// //       resource_type: resourceType,
 // //       allowed_formats: allowedFormats,
 // //       transformation: resourceType === 'image'
 // //         ? [{ width: 1200, crop: 'limit', quality: 'auto' }]
@@ -16,150 +70,191 @@
 // //     }
 // //   });
 
-// // // ── File filters ──
 // // const fileFilter = (types) => (req, file, cb) => {
 // //   if (types.includes(file.mimetype)) cb(null, true);
 // //   else cb(new Error(`Invalid file type: ${file.mimetype}`));
 // // };
 
-// // // ── Export multer instances ──
-
-// // // Results (PDF) — 'raw' হিসেবে Cloudinary-তে যাবে
+// // // ✅ শুধু multer instance — .single() ছাড়া
 // // exports.uploadResultPdf = multer({
 // //   storage: cloudStorage('results', 'raw', ['pdf']),
 // //   fileFilter: fileFilter(['application/pdf']),
-// //   limits: { fileSize: 10 * 1024 * 1024 }   // 10MB
+// //   limits: { fileSize: 10 * 1024 * 1024 }
 // // });
 
-// // // Fee screenshots (image)
 // // exports.uploadScreenshot = multer({
 // //   storage: cloudStorage('fees', 'image', ['jpg', 'jpeg', 'png', 'webp']),
 // //   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
 // //   limits: { fileSize: 5 * 1024 * 1024 }
 // // });
 
-// // // Student photos
 // // exports.uploadPhoto = multer({
 // //   storage: cloudStorage('students', 'image', ['jpg', 'jpeg', 'png', 'webp']),
 // //   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
 // //   limits: { fileSize: 2 * 1024 * 1024 }
 // // });
 
-// // // Payment QR (settings)
+// // // ✅ এটাও শুধু instance — .single() এখানে না
 // // exports.uploadQr = multer({
 // //   storage: cloudStorage('settings', 'image', ['jpg', 'jpeg', 'png', 'webp']),
 // //   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
 // //   limits: { fileSize: 1 * 1024 * 1024 }
 // // });
 
-// // middleware/upload.js
 // const multer = require('multer');
 // const { CloudinaryStorage } = require('multer-storage-cloudinary');
 // const cloudinary = require('../config/cloudinary');
 
-// const cloudStorage = (folder, resourceType = 'auto', allowedFormats) =>
+// // ── Cloudinary storage ──
+// const cloudStorage = (folder, resourceType = 'auto') =>
 //   new CloudinaryStorage({
 //     cloudinary,
-//     params: {
+//     params: async (req, file) => ({
 //       folder: `madrasa/${folder}`,
 //       resource_type: resourceType,
-//       allowed_formats: allowedFormats,
-//       transformation: resourceType === 'image'
-//         ? [{ width: 1200, crop: 'limit', quality: 'auto' }]
-//         : undefined
-//     }
+//       // PDF এর জন্য public_id explicit
+//       public_id: `${Date.now()}-${Math.round(Math.random() * 1e9)}`,
+//       format: file.mimetype === 'application/pdf' ? 'pdf' : undefined
+//     })
 //   });
 
 // const fileFilter = (types) => (req, file, cb) => {
+//   console.log('File received:', file.originalname, file.mimetype);   // 👈 debug
 //   if (types.includes(file.mimetype)) cb(null, true);
 //   else cb(new Error(`Invalid file type: ${file.mimetype}`));
 // };
 
-// // ✅ শুধু multer instance — .single() ছাড়া
+// // ── Result PDF (raw) ──
 // exports.uploadResultPdf = multer({
-//   storage: cloudStorage('results', 'raw', ['pdf']),
+//   storage: cloudStorage('results', 'raw'),
 //   fileFilter: fileFilter(['application/pdf']),
 //   limits: { fileSize: 10 * 1024 * 1024 }
 // });
 
+// // ── Screenshot / Photo / QR (image) ──
 // exports.uploadScreenshot = multer({
-//   storage: cloudStorage('fees', 'image', ['jpg', 'jpeg', 'png', 'webp']),
+//   storage: cloudStorage('fees', 'image'),
 //   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
 //   limits: { fileSize: 5 * 1024 * 1024 }
 // });
 
 // exports.uploadPhoto = multer({
-//   storage: cloudStorage('students', 'image', ['jpg', 'jpeg', 'png', 'webp']),
+//   storage: cloudStorage('students', 'image'),
 //   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
 //   limits: { fileSize: 2 * 1024 * 1024 }
 // });
 
-// // ✅ এটাও শুধু instance — .single() এখানে না
 // exports.uploadQr = multer({
-//   storage: cloudStorage('settings', 'image', ['jpg', 'jpeg', 'png', 'webp']),
+//   storage: cloudStorage('settings', 'image'),
 //   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
 //   limits: { fileSize: 1 * 1024 * 1024 }
 // });
+
+
+// // Admission documents — photo + certificates
+// exports.uploadAdmission = multer({
+//   storage: cloudStorage('admissions', 'auto'),
+//   limits: { fileSize: 5 * 1024 * 1024 },
+// });
+
+// // Multiple fields wrapper
+// exports.uploadAdmissionFields = exports.uploadAdmission.fields([
+//   { name: 'photo', maxCount: 1 },
+//   { name: 'birthCertificate', maxCount: 1 },
+//   { name: 'previousCertificate', maxCount: 1 },
+// ]);
 
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('../config/cloudinary');
 
-// ── Cloudinary storage ──
+// ═══════════════════════════════════════════════════════
+// Base Cloudinary Storage
+// ═══════════════════════════════════════════════════════
 const cloudStorage = (folder, resourceType = 'auto') =>
   new CloudinaryStorage({
     cloudinary,
     params: async (req, file) => ({
       folder: `madrasa/${folder}`,
       resource_type: resourceType,
-      // PDF এর জন্য public_id explicit
       public_id: `${Date.now()}-${Math.round(Math.random() * 1e9)}`,
-      format: file.mimetype === 'application/pdf' ? 'pdf' : undefined
-    })
+      format: file.mimetype === 'application/pdf' ? 'pdf' : undefined,
+    }),
   });
 
 const fileFilter = (types) => (req, file, cb) => {
-  console.log('File received:', file.originalname, file.mimetype);   // 👈 debug
+  console.log('File received:', file.originalname, file.mimetype);
   if (types.includes(file.mimetype)) cb(null, true);
   else cb(new Error(`Invalid file type: ${file.mimetype}`));
 };
 
-// ── Result PDF (raw) ──
+// ═══════════════════════════════════════════════════════
+// Results
+// ═══════════════════════════════════════════════════════
 exports.uploadResultPdf = multer({
   storage: cloudStorage('results', 'raw'),
   fileFilter: fileFilter(['application/pdf']),
-  limits: { fileSize: 10 * 1024 * 1024 }
+  limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-// ── Screenshot / Photo / QR (image) ──
+// ═══════════════════════════════════════════════════════
+// Student photos / fees screenshots / QR
+// ═══════════════════════════════════════════════════════
 exports.uploadScreenshot = multer({
   storage: cloudStorage('fees', 'image'),
   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
-  limits: { fileSize: 5 * 1024 * 1024 }
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
 exports.uploadPhoto = multer({
   storage: cloudStorage('students', 'image'),
   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
-  limits: { fileSize: 2 * 1024 * 1024 }
+  limits: { fileSize: 2 * 1024 * 1024 },
 });
 
 exports.uploadQr = multer({
   storage: cloudStorage('settings', 'image'),
   fileFilter: fileFilter(['image/jpeg', 'image/png', 'image/jpg', 'image/webp']),
-  limits: { fileSize: 1 * 1024 * 1024 }
+  limits: { fileSize: 1 * 1024 * 1024 },
 });
 
-
-// Admission documents — photo + certificates
+// ═══════════════════════════════════════════════════════
+// Admission documents
+// ═══════════════════════════════════════════════════════
 exports.uploadAdmission = multer({
   storage: cloudStorage('admissions', 'auto'),
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-// Multiple fields wrapper
 exports.uploadAdmissionFields = exports.uploadAdmission.fields([
   { name: 'photo', maxCount: 1 },
   { name: 'birthCertificate', maxCount: 1 },
   { name: 'previousCertificate', maxCount: 1 },
+]);
+
+// ═══════════════════════════════════════════════════════
+// 🆕 ANNOUNCEMENTS — PDF + Image in one request
+// ═══════════════════════════════════════════════════════
+const announcementStorage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => {
+    const isPdf = file.mimetype === 'application/pdf';
+    return {
+      folder: isPdf ? 'madrasa/announcements/pdf' : 'madrasa/announcements/images',
+      resource_type: isPdf ? 'raw' : 'image',
+      public_id: `${Date.now()}-${Math.round(Math.random() * 1e9)}`,
+      format: isPdf ? 'pdf' : undefined,
+    };
+  },
+});
+
+const announcementMulter = multer({
+  storage: announcementStorage,
+  limits: { fileSize: 15 * 1024 * 1024 },
+});
+
+// ✅ MUST declare both field names
+exports.uploadAnnouncementFields = announcementMulter.fields([
+  { name: 'pdf', maxCount: 1 },
+  { name: 'image', maxCount: 1 },
 ]);

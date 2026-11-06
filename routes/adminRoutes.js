@@ -13,6 +13,8 @@ const feeC      = require('../controllers/feeController');
 const noticeC   = require('../controllers/noticeController');
 const settingC = require('../controllers/settingController');
 const { uploadQr } = require('../middleware/upload');
+const announcementC = require('../controllers/announcementController');
+const { uploadAnnouncementFields } = require('../middleware/upload');
 
 // -------- Public --------
 router.post('/auth/register', adminAuthC.register);
@@ -80,5 +82,12 @@ router.get('/admissions/:id', admissionC.getApplication);
 router.patch('/admissions/:id/status', admissionC.updateStatus);
 router.post('/admissions/:id/approve', admissionC.approve);
 router.delete('/admissions/:id', admissionC.removeApplication);
+
+router.post('/announcements', uploadAnnouncementFields, announcementC.create);
+router.get('/announcements', announcementC.list);
+router.get('/announcements/:id', announcementC.get);
+router.put('/announcements/:id', uploadAnnouncementFields, announcementC.update);
+router.patch('/announcements/:id/toggle', announcementC.toggleActive);
+router.delete('/announcements/:id', announcementC.remove);
 
 module.exports = router;
